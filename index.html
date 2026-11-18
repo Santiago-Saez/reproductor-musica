@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reproductor + Visualizador</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="drop-overlay" hidden>Suelta los ficheros para añadirlos a la cola</div>
+
+<header>
+  <h1>🎧 Reproductor local</h1>
+  <div class="header-actions">
+    <button id="btn-tone" title="Genera un tono de prueba (sin ficheros)">Tono prueba</button>
+    <button id="btn-perf" title="Alterna modo rendimiento">⚡ Rendimiento: <span id="perf-label">Auto</span></button>
+  </div>
+</header>
+
+<main>
+  <section id="dropzone" tabindex="0" aria-label="Zona para arrastrar ficheros">
+    <p><strong>Arrastra ficheros de audio aquí</strong> o</p>
+    <label class="file-btn">Elegir ficheros
+      <input type="file" id="file-input" accept="audio/*" multiple hidden />
+    </label>
+    <small>Se quedan en local, no se suben a ningún servidor.</small>
+  </section>
+
+  <section class="player">
+    <div id="now-playing">Sin pista — añade ficheros</div>
+    <div class="controls-row">
+      <button id="btn-prev" title="Anterior (P)">⏮</button>
+      <button id="btn-play" title="Play/Pausa (Espacio)">▶</button>
+      <button id="btn-next" title="Siguiente (N)">⏭</button>
+      <span id="t-cur">0:00</span>
+      <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Progreso. Arrastra para buscar" />
+      <span id="t-dur">0:00</span>
+    </div>
+    <div class="controls-row sub">
+      <label>🔊 <input type="range" id="vol" min="0" max="1" step="0.01" value="0.9" /></label>
+      <button id="btn-mute" title="Silenciar (M)">Mute</button>
+      <label>Repetir:
+        <select id="repeat">
+          <option value="all">Todo</option>
+          <option value="one">Una</option>
+          <option value="none">No</option>
+        </select>
+      </label>
+      <button id="btn-shuffle" title="Aleatorio">🔀</button>
+      <span id="audio-state" class="pill">motor parado</span>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </section>
+
+  <section class="viz-panel">
+    <div class="viz-header">
+      <h2>Visualizador</h2>
+      <div class="seg" role="tablist" aria-label="Modo visualizador">
+        <button data-mode="bars" class="active">Barras</button>
+        <button data-mode="wave">Onda</button>
+        <button data-mode="off">Off</button>
+      </div>
+      <span id="fps" class="pill">— fps</span>
+    </div>
+    <canvas id="viz" height="160"></canvas>
+    <small class="hint">AnalyserNode + canvas + rAF. En modo Auto se baja a 30 fps y a mitad de resolución si el equipo va lento.</small>
+  </section>
+
+  <section class="eq-panel">
+    <div class="eq-header">
+      <h2>Ecualizador · 5 bandas</h2>
+      <select id="preset" aria-label="Preajuste">
+        <option value="flat">Plano</option>
+        <option value="rock">Rock</option>
+        <option value="pop">Pop</option>
+        <option value="jazz">Jazz</option>
+        <option value="classical">Clásica</option>
+        <option value="bass">Graves</option>
+        <option value="treble">Agudos</option>
+        <option value="custom">Personalizado</option>
+      </select>
+      <button id="btn-flat">Reset</button>
+    </div>
+    <div id="eq-sliders"></div>
+  </section>
+
+  <section>
+    <div class="queue-header">
+      <h2>Cola <span id="q-count">(0)</span></h2>
+      <div>
+        <button id="btn-clear">Vaciar</button>
+      </div>
+    </div>
+    <ol id="queue"></ol>
+  </section>
+
+  <section class="help">
+    <h2>Atajos</h2>
+    <ul>
+      <li><kbd>Espacio</kbd> play / pausa · <kbd>N</kbd> siguiente · <kbd>P</kbd> anterior</li>
+      <li><kbd>←</kbd>/<kbd>→</kbd> ∓ 5 s (con <kbd>Shift</kbd> ∓ 10 s) · <kbd>↑</kbd>/<kbd>↓</kbd> volumen</li>
+      <li><kbd>M</kbd> mute · <kbd>B</kbd>/<kbd>O</kbd>/<kbd>V</kbd> barras / off / onda · <kbd>Supr</kbd> quita la pista actual</li>
+    </ul>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
